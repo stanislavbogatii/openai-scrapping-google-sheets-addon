@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script>
+        
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .form-container {
+        margin-top: 20px;
+      }
+      .remove-button, .add-button {
+        cursor: pointer;
+      }
+      .remove-button {
+        color: red;
+      }
+      .add-button {
+        background-color: #28a745;
+        color: white;
+      }
+      .tab-active {
+        border-bottom: 4px solid blue !important;
+      }
+    </style>
+  </head>
+  <body class=""> 
+
+    <!-- header -->
+    <div class="w-full flex p-1 shadow-b-lg shadow items-center">
+      <div class="text-gray-700 font-medium text-center">
+        My app
+      </div>
+      <div 
+      id="settings-button"
+      onclick="changePage('settings')"
+      class="rounded-full hover:bg-gray-200 ml-auto p-2">
+        <img 
+        class=""
+        alt="settings" 
+        src="https://img.icons8.com/?size=100&id=364&format=png&color=000000" 
+        width="25" 
+        height="25">
+      </div>
+      <div 
+      id="back-button"
+      onclick="changePage('task')"
+      class="rounded-full hover:bg-gray-200 ml-auto p-2 hidden">
+        <img 
+        alt="settings" 
+        class="transform"
+        src="https://img.icons8.com/?size=100&id=yiR4rPf7BGje&format=png&color=000000" 
+        width="25" 
+        height="25">
+      </div>
+    </div>
+    <script>
+      function changePage(page) {
+        if (page === 'settings') {
+          document.getElementById('auth-page').classList.remove('hidden');
+          document.getElementById('task-page').classList.add('hidden');
+          document.getElementById('settings-button').classList.add('hidden');
+          document.getElementById('back-button').classList.remove('hidden');
+        } 
+        else {
+          document.getElementById('auth-page').classList.add('hidden');
+          document.getElementById('task-page').classList.remove('hidden');
+          document.getElementById('settings-button').classList.remove('hidden');
+          document.getElementById('back-button').classList.add('hidden');
+        }
+      }
+    </script>
+    <!-- end header -->
+
+    <!-- auth page -->
+    <div 
+    class="hidden"
+    id="auth-page">
+      <div 
+      class="container !mt-0 px-4 form-container">
+        <h1 class="w-full p-1 mb-1 text-left text-lg font-medium text-gray-700">Save your tokens</h1>
+        <div id="form-container w-full">
+          <div class="form-group row w-full">
+            <div class="col-md-4 mt-2">
+              <span class="">PropelAuth token</span>
+              <input type="text" id="propel-token-input" class="border border-gray-500 text-gray-900 flex-1 text-sm rounded focus:border-blue-500 block w-full flex-1 p-2.5" placeholder="Enter Propel Auth Token">
+            </div>
+            <div class="col-md-4 mt-2">
+              <span class="">OpenAI token</span>
+              <input type="text" id="openai-token-input" class="border border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block w-full p-2.5" placeholder="Enter OpenAI Token">
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-2 w-full mt-2">
+          <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 flex-1 focus:ring-blue-300 font-medium rounded text-sm px-5 py-2.5 mb-2" id="save-tokens-btn" onclick="submitAuthForm()">Save tokens</button>
+        </div>
+        <div class="w-full" id="status-message"></div>
+      </div>
+    </div>
+    <!-- end auth page  -->
+
+
+    <div id="task-page" class="px-2">
+        <div class="flex flex-col gap-1 mt-2 ">
+          <button 
+          onclick="handleSaveTasks()"
+          id="save-state-button"
+          class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded text-sm px-2 py-2.5">
+            Save tasks
+          </button>
+          <span class="text-green-700 w-full" id="save-state-status-message">
+        </div>
+      <!-- template form -->
+        <h1 class="w-full p-1 mb-1 text-left text-lg font-medium text-gray-700">Configure your task</h1>
+        <div id="form-container" class="flex flex-col gap-2">
+          <div id="task-1" class="flex-flex-col task">
+          <div id="task-1-template" class="configuration-container form-group row border rounded border-gray-300 p-2 shadow">
+            <!-- tabs -->
+            <span class="">Configuration type</span>
+            <div class="flex gap-2 mt-2 mb-2">
+              <button 
+              id="tab-use-template-task-1-template"
+              class="text-white w-full !bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('template', 1)">
+                <div>Use template</div>
+              </button>
+              <button 
+              id="tab-use-custom-task-1-template"
+              class="text-white w-full !bg-blue-700 opacity-50 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('custom', 1)">
+                <div>Use custom</div>
+              </button>
+            </div>
+            <!-- end tabs -->
+            <h2 id="label-task-1-template" class="label-template">Task #1</h2>
+            <div class="col-md-4 mb-2 pt-2">
+              <span class="">Task type</span>
+              <select 
+              onchange="onSelectTaskType(this)"
+              id="task-type-task-1-template"
+              class="border border-gray-500 mt-1 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 task-type">
+                <option value="" selected disabled hidden>Select task type</option>
+                <option value="company_description">Company description from URL</option>
+                <option value="customer_logos">Customer logos on landing page from URL</option>
+                <option value="linkedin_profile">Linkedin profile URL to profile, posts, likes scrape</option>
+                <option value="linkedin_post">Linkedin post URL to post engagers</option>
+                <option value="linkedin_persona">Linkedin profile scrape-to-sales persona</option>
+                <option value="linkedin_intent">Linkedin profile scrape-to-intent insights</option>
+                <option value="linkedin_question">Open question about Linkedin profile</option>
+                <option value="description_b2b">Description to B2B/B2C</option>
+                <option value="product_vs_service">Description to Product vs. Service</option>
+                <option value="description_icp">Description to ICP</option>
+                <option value="description_offer">Description to Main offer</option>
+                <option value="description_problem">Description to Problem Solved</option>
+                <option value="company_question">Open question about company</option>
+              </select>
+            </div>
+            <div class="mt-2 w-full flex gap-2">
+              <div id="custom-input-container-task-1-template" class="w-full">
+              </div>
+            </div>
+            <div class="input-range flex flex-col pb-2">
+              <span id="input-column-label-task-1-template">Input column</span>
+              <select
+              id="select-input-column-task-1-template" 
+              class="border border-gray-500 mt-1 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 task-type">
+                <option value="" selected hidden disalbed>Select input column</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
+                <option value="J">J</option>
+                <option value="K">K</option>
+                <option value="L">L</option>
+                <option value="M">M</option>
+                <option value="N">N</option>
+                <option value="O">O</option>
+                <option value="P">P</option>
+                <option value="Q">Q</option>
+                <option value="R">R</option>
+                <option value="S">S</option>
+                <option value="T">T</option>
+                <option value="U">U</option>
+                <option value="V">V</option>
+                <option value="W">W</option>
+                <option value="X">X</option>
+                <option value="Y">Y</option>
+                <option value="Z">Z</option>
+              </select>
+            </div>
+            <div class="output-range pt-2 pb-2">
+              <span>Output settings</span>
+              <div class="flex gap-2 mt-1 flex-col">
+                <input
+                id="nr-of-rows-task-1-template" 
+                type="number" min="1" placeholder="#of rows" class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                <select
+                id="select-output-column-task-1-template" 
+                class="border border-gray-500 text-gray-900 text-sm rounded focus:ring-blue-500 w-full focus:border-blue-500 block flex-1 p-2.5 task-type">
+                  <option value="" selected hidden disalbed>Select output column</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                  <option value="H">H</option>
+                  <option value="I">I</option>
+                  <option value="J">J</option>
+                  <option value="K">K</option>
+                  <option value="L">L</option>
+                  <option value="M">M</option>
+                  <option value="N">N</option>
+                  <option value="O">O</option>
+                  <option value="P">P</option>
+                  <option value="Q">Q</option>
+                  <option value="R">R</option>
+                  <option value="S">S</option>
+                  <option value="T">T</option>
+                  <option value="U">U</option>
+                  <option value="V">V</option>
+                  <option value="W">W</option>
+                  <option value="X">X</option>
+                  <option value="Y">Y</option>
+                  <option value="Z">Z</option>
+                </select>
+              </div>
+              <div>
+                <input onchange="toggleEntireColumn(1, 'template')" type="checkbox" id="entire-column-checkbox-task-1-template">
+                <span>Entire column</span>
+              </div>
+            </div>
+
+            <div class="mt-2 w-full flex gap-2">
+              <button 
+              id="delete-task-1"
+              class="text-white w-full bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded text-sm px-5 py-2.5" 
+              onclick="removeForm(this, 1)">Delete</button>
+              <button 
+              id="run-task-1"
+              class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="runTask(this, 'template')">
+                <div class="flex items-center gap-2">
+                  <img src="https://img.icons8.com/?size=100&id=LVtMPps1ASuP&format=png&color=000000" width="20" height="20" alt="play">
+                  <div class="run-task-1-text">Run task</div>
+                </div>
+              </button>
+            </div>
+            <div class="w-full mb-2" id="status-message-task-1-template"></div>
+          </div>
+
+          <div 
+          id="task-1-custom"
+          class="form-group task-1-custom configuration-container row border rounded border-gray-300 p-2 shadow flex flex-col gap-2 hidden">
+            <!-- tabs -->
+            <span class="">Configuration type</span>
+            <div class="flex gap-2">
+              <button 
+              id="tab-use-template-task-1-custom"
+              class="text-white w-full !bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('template', 1)">
+                <div>Use template</div>
+              </button>
+              <button 
+              id="tab-use-custom-task-1-custom"
+              class="text-white w-full !bg-blue-700 opacity-50 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('custom', 1)">
+                <div>Use custom</div>
+              </button>
+            </div>
+            <!-- end tabs -->
+            <h2 id="label-task-1-custom" class="label-custom">Task #1</h2>
+            <div class="flex flex-col gap-1">
+              <span>Persona</span>
+              <input 
+              id="persona-input-task-1-custom"
+              type="text" 
+              placeholder="e.g. you are an expert in e-commer..." 
+              class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <span>Task</span>
+              <input 
+              id="task-input-task-1-custom"
+              type="text" 
+              placeholder="e.g. Determine if a business..." 
+              class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <span>Steps</span>
+              <div id="steps-container-task-1-custom" class="flex flex-col gap-1">
+                <div class="steps-row flex gap-1 items-center">
+                  <input 
+                  type="text" 
+                  placeholder="Enter step" 
+                  class="border step-task-1-custom w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                  <div
+                  onclick="removeStep(this, 1)" 
+                  class="h-full flex items-center cursor-pointer">
+                    <img src="https://img.icons8.com/?size=100&id=PE50MiaFV893&format=png&color=000000" class="min-w-[10px] min-h-[10px]" alt="delete" width="10" height="10">
+                  </div>
+                </div>
+              </div>
+              <button 
+              onclick="addStep(1)"
+              id="run-task-1"
+              class="text-white w-full !bg-green-700  hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm text-center px-2 py-2.5" >
+                + Add step
+              </button>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span>Guidelines</span>
+              <div id="guidelines-container-task-1-custom" class="flex flex-col gap-1">
+                <div class="guidelines-row-task-1-custom flex gap-1 items-center">
+                  <input 
+                  type="text" 
+                  placeholder="Name" 
+                  class="border guideline-name w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5" />
+                  <input 
+                  type="text" 
+                  placeholder="Enter guideline" 
+                  class="border guideline-value w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5" />
+                  <div
+                  onclick="removeGuideline(this, 1)" 
+                  class="h-full flex items-center cursor-pointer">
+                    <img src="https://img.icons8.com/?size=100&id=PE50MiaFV893&format=png&color=000000" 
+                    class="min-w-[10px] min-h-[10px]" 
+                    alt="delete" 
+                    width="10" 
+                    height="10">
+                  </div>
+                </div>
+              </div>
+              <button 
+              onclick="addGuideline(1)"
+              id="run-task-1"
+              class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm text-center px-2 py-2.5" >
+                + Add guideline
+              </button>
+            </div>
+            <div class="flex flex-col pb-2">
+              <span id="input-column-label-task-1">Output format</span>
+              <input 
+              id="output-format-nr-of-cols"
+              type="number" 
+              value="1"
+              onchange="onChangeColumnNumber(this, 1)"
+              min="1"
+              max="5"
+              placeholder="#of columns" 
+              class="border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5" />
+              <div>
+                <div 
+                id="column-name-container-task-1-custom" 
+                class="flex flex-col gap-1">
+                  <input 
+                  placeholder="Column 1 name"
+                  class="border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 output-format-column-name-task-1-custom" 
+                  id="" 
+                  type="text">
+                </div>
+                <div id="column-container">
+                  <div id="output-format-grid-task-1-custom" class="flex mt-1 flex-row overflow-x-scroll gap-1">
+                    <div class="output-format-column-task-1-custom flex flex-col gap-1">
+                      <div 
+                      class="flex items-center gap-1 column-1 row-1 row">
+                        <div
+                        onclick="removeRowOutputFormat(1, 1)" 
+                        class="h-full flex items-center cursor-pointer ">
+                          <img src="https://img.icons8.com/?size=100&id=PE50MiaFV893&format=png&color=000000" class="min-w-[10px] min-h-[10px]" alt="delete" width="10" height="10">
+                        </div>
+                        <input 
+                        type="text" 
+                        placeholder="Column 1 example 1" 
+                        class="min-w-[200px] border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 output-format-input">
+                      </div>
+                    </div>
+                  </div>
+                  <button 
+                  onclick="addRowOutputFormat(1)"
+                  id="run-task-1"
+                  class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm text-center px-2 py-2.5" >
+                    + Add Example Row
+                  </button>
+                </div>
+              </div>  
+            </div>
+
+
+            <div class="flex flex-col pb-2">
+              <span id="input-column-label-task-1">Input column</span>
+              <select
+              id="select-input-column-task-1-custom" 
+              class="border border-gray-500 mt-1 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 task-type">
+                <option value="" selected hidden disalbed>Select input column</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
+                <option value="J">J</option>
+                <option value="K">K</option>
+                <option value="L">L</option>
+                <option value="M">M</option>
+                <option value="N">N</option>
+                <option value="O">O</option>
+                <option value="P">P</option>
+                <option value="Q">Q</option>
+                <option value="R">R</option>
+                <option value="S">S</option>
+                <option value="T">T</option>
+                <option value="U">U</option>
+                <option value="V">V</option>
+                <option value="W">W</option>
+                <option value="X">X</option>
+                <option value="Y">Y</option>
+                <option value="Z">Z</option>
+              </select>
+            </div>
+            <div class="output-range pb-2">
+              <span>Output settings</span>
+              <div class="flex gap-2 mt-1 flex-col">
+                <input
+                id="nr-of-rows-task-1-custom" 
+                type="number" 
+                min="1" 
+                placeholder="#of rows" 
+                class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                <select
+                id="select-output-column-task-1-custom" 
+                class="border border-gray-500 text-gray-900 text-sm rounded focus:ring-blue-500 w-full focus:border-blue-500 block flex-1 p-2.5 task-type">
+                  <option value="" selected hidden disalbed>Select output column</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                  <option value="H">H</option>
+                  <option value="I">I</option>
+                  <option value="J">J</option>
+                  <option value="K">K</option>
+                  <option value="L">L</option>
+                  <option value="M">M</option>
+                  <option value="N">N</option>
+                  <option value="O">O</option>
+                  <option value="P">P</option>
+                  <option value="Q">Q</option>
+                  <option value="R">R</option>
+                  <option value="S">S</option>
+                  <option value="T">T</option>
+                  <option value="U">U</option>
+                  <option value="V">V</option>
+                  <option value="W">W</option>
+                  <option value="X">X</option>
+                  <option value="Y">Y</option>
+                  <option value="Z">Z</option>
+                </select>
+              </div>
+              <div>
+                <input onchange="toggleEntireColumn(1, 'custom')" type="checkbox" id="entire-column-checkbox-task-1-custom">
+                <span>Entire column</span>
+              </div>
+            </div>
+            <div class="mt-2 w-full flex gap-2 flex">
+              <button 
+              id="delete-task-1"
+              class="text-white w-full bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded text-sm px-5 py-2.5" 
+              onclick="removeForm(this, 1)">Delete</button>
+              <button 
+              id="run-task-1"
+              class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="runTask(this, 'custom')">
+                <div class="flex items-center gap-2">
+                  <img src="https://img.icons8.com/?size=100&id=LVtMPps1ASuP&format=png&color=000000" width="20" height="20" alt="play">
+                  <div class="run-task-1-text text-center">Run task</div>
+                </div>
+              </button>
+            </div>
+            <div class="w-full mb-2" id="status-message-task-1-custom"></div>
+          </div>
+          </div>
+        </div>
+      <div class="flex w-full mt-2">
+        <button class="text-white w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-5 py-2.5 mb-2" onclick="addForm()">Add task</button>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+
+    <!-- Save taks -->
+    <script>
+    async function handleSaveTasks() {
+      const formContainer = document.getElementById('form-container');
+      const activeTasks = Array.from(formContainer.children).map((taskContainer, id) => {
+        const template = taskContainer.children[0];
+        const custom = taskContainer.children[1];
+        if (template.classList.contains("hidden")) return {type: "custom", component: custom};
+        else return {type: "template", component: template, id};
+      })
+      const tasksObjects = activeTasks.map((taskObj, id) => {
+        const task_type = document.getElementById(`task-type-task-${id + 1}-template`)?.value;
+        const input_column = document.getElementById(`select-input-column-task-${id + 1}-template`)?.value;
+        const output_column = document.getElementById(`select-output-column-task-${id + 1}-template`)?.value;
+        const nr_of_rows = document.getElementById(`nr-of-rows-task-${id + 1}-template`)?.value;
+        const is_entire_column = document.getElementById(`entire-column-checkbox-task-${id + 1}-template`)?.checked;
+
+
+
+        const is_entire_column_custom = document.getElementById(`entire-column-checkbox-task-${id + 1}-custom`)?.checked;
+        const persona = document.getElementById(`persona-input-task-${id + 1}-custom`)?.value;
+        const task = document.getElementById(`task-input-task-${id + 1}-custom`)?.value;
+        const stepInputs = document.querySelectorAll(`.step-task-${id + 1}-custom`);
+        const steps = Array.from(stepInputs).map(input => input.value).filter(item => item);
+        const guidelinedInputGroups = document.querySelectorAll(`.guidelines-row-task-${id + 1}-custom`);
+        const guidelines = Array.from(guidelinedInputGroups).map(group => {
+          const name = group.querySelector('.guideline-name')?.value;
+          const value = group.querySelector('.guideline-value')?.value;
+          if (!name || !value) return null;
+          return {
+            name,
+            value
+          };
+        }).filter(item => item);
+
+        const outputFormatColumnNamesInputs = document.querySelectorAll(`.output-format-column-name-task-${id + 1}-custom`);
+        const output_format_column_names = Array.from(outputFormatColumnNamesInputs).map(input => input.value);
+
+        const outputFormatColumns = document.querySelectorAll(`.output-format-column-task-${id + 1}-custom`);
+        const output_format_columns_values = Array.from(outputFormatColumns).map(column => {
+          const columnsInputs = column.querySelectorAll('.output-format-input');
+          return Array.from(columnsInputs).map(input => input.value)
+        })
+
+        const input_column_custom = document.getElementById(`select-input-column-task-${id + 1}-custom`)?.value;
+        const output_column_custom = document.getElementById(`select-output-column-task-${id + 1}-custom`)?.value;
+        const nr_of_rows_custom = document.getElementById(`nr-of-rows-task-${id + 1}-custom`)?.value;
+        
+
+        return {
+          type: taskObj.type,
+          template: {
+            type: "template",
+            task_type,
+            input_column,
+            output_column,
+            nr_of_rows,
+            is_entire_column
+          },
+          custom: {
+            type: "custom",
+            persona,
+            task,
+            nr_of_rows: nr_of_rows_custom,
+            output_column: output_column_custom,
+            input_column: input_column_custom,
+            output_format_columns_values,
+            output_format_column_names,
+            steps,
+            guidelines,
+            is_entire_column: is_entire_column_custom
+          }
+        }
+      })
+      await google.script.run.saveTasks(tasksObjects)
+    }
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', loadSavedTasks);
+      async function loadSavedTasks() {
+        const response = await google.script.run.withSuccessHandler(async response => {
+          const data = await JSON.parse(response);
+          document.getElementById('task-1').remove();
+          data.map((item, id) => {
+            document.getElementById('task-1');
+            addSavedForm(item);
+          })
+        }).findTasks();
+      }
+
+    </script>
+
+
+    <script>
+    function onSelectTaskType(event) {
+      console.log(event)
+      const formGroup = event.closest('.form-group');
+      const task = formGroup.id;
+      const customInputContainer = document.getElementById('custom-input-container-' + task);
+      document.getElementById('custom-input-' + task)?.remove();
+      document.getElementById('custom-label-' + task)?.remove();
+
+      const label = document.getElementById('input-column-label-' + task);
+        switch (event.value) {
+          case 'company_description':
+            label.textContent = "Company URL";
+            break;
+          case 'customer_logos':
+            label.textContent = "Enter landing page URL for customer logos";
+            break;
+          case 'linkedin_profile':
+            label.textContent = "Enter Linkedin profile URL";
+            break;
+          case 'linkedin_post':
+            label.textContent = "Enter Linkedin post URL";
+            break;
+          case 'linkedin_persona':
+            label.textContent = "Enter Linkedin profile for sales persona";
+            break;
+          case 'linkedin_intent':
+            label.textContent = "Enter Linkedin profile for intent insights";
+            break;
+          case 'linkedin_question':
+            label.textContent = "Enter open question about Linkedin profile";
+            break;
+          case 'description_b2b':
+            label.textContent = "Enter description for B2B/B2C";
+            break;
+          case 'product_vs_service':
+            const customLabel = document.createElement('span');
+            customLabel.textContent = "Product/service options (comma separated)";
+            customLabel.id = "custom-label-" + task;
+            const newInput = document.createElement('input');
+            newInput.id = "custom-input-" + task;
+            newInput.classList = "min-w-[200px] border w-full mb-2 border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5";
+            newInput.placeholder = "Product/service options (comma separated)";
+            customInputContainer.appendChild(customLabel);
+            customInputContainer.appendChild(newInput);
+            break;
+          case 'description_icp':
+            label.textContent = "Enter description for ICP";
+            break;
+          case 'description_offer':
+            label.textContent = "Enter description for Main offer";
+            break;
+          case 'description_problem':
+            label.textContent = "Enter description for Problem Solved";
+            break;
+          case 'company_question':
+            label.textContent = "Enter open question about company";
+            break;
+          case 'own_prompt':
+            label.textContent = "Build your own prompt";
+            break;
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', checkAuthTokens);
+
+      async function checkAuthTokens() {
+        const propelAuthTokenInput = document.getElementById('propel-token-input');
+        const openAITokenInput = document.getElementById('openai-token-input');
+        let openAIToken;
+        let propelAuthToken;
+
+        await google.script.run.withSuccessHandler(response => {
+          if (!response) {
+            // document.getElementById('auth-tab').classList.add("!bg-red-400");
+            openAITokenInput.placeholder = "Enter OpenAI Token";
+            return;
+          }
+          // document.getElementById('auth-tab').classList.remove("!bg-red-400");
+          openAIToken = response;
+          openAITokenInput.value = response;
+        }).getOpenAIAPIKey();
+
+        await google.script.run.withSuccessHandler(response => {
+          if (!response) {
+            // document.getElementById('auth-tab').classList.add("!bg-red-400");
+            propelAuthTokenInput.placeholder = "Enter PropelAuth Token";
+            return;
+          }
+          // document.getElementById('auth-tab').classList.remove("!bg-red-400");
+          propelAuthToken = response;
+          propelAuthTokenInput.value = response;
+        }).getPropelAuthAPIKey();
+
+        // if (!propelAuthToken && !openAIToken) {
+        //   document.getElementById('auth-tab').classList.add("!bg-red-400");
+        // } else {
+        //   document.getElementById('auth-tab').classList.add("!bg-red-400");
+        // }
+        
+      }
+    </script>
+
+
+            <script>
+              function addGuideline(taskId) {
+                const container = document.getElementById(`guidelines-container-task-${taskId}-custom`);
+                const newForm = document.createElement('div');
+                newForm.className = `guidelines-row-task-${taskId}-custom flex gap-1 items-center`;
+                newForm.innerHTML = `
+                  <input 
+                  type="text" 
+                  placeholder="Name" 
+                  class="border guideline guideline-name w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                  <input 
+                  type="text" 
+                  placeholder="Enter guideline" 
+                  class="border guideline-value w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                  <div
+                  onclick="removeGuideline(this, ${taskId})" 
+                  class="h-full flex items-center cursor-pointer">
+                    <img src="https://img.icons8.com/?size=100&id=PE50MiaFV893&format=png&color=000000" class="min-w-[10px] min-h-[10px]" alt="delete" width="10" height="10">
+                  </div>
+                `
+                container.appendChild(newForm);
+              }
+
+              function addStep(taskId) {
+                const container = document.getElementById(`steps-container-task-${taskId}-custom`);
+                const newForm = document.createElement('div');
+                newForm.className = 'steps-row flex gap-1 items-center';
+                newForm.innerHTML = `
+                  <input 
+                  type="text" 
+                  placeholder="Enter step" 
+                  class="border step-task-1-custom w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5" />
+                  <div
+                  onclick="removeStep(this, ${taskId})" 
+                  class="h-full flex items-center cursor-pointer">
+                    <img src="https://img.icons8.com/?size=100&id=PE50MiaFV893&format=png&color=000000" class="min-w-[10px] min-h-[10px]" alt="delete" width="10" height="10">
+                  </div>
+                `
+                container.appendChild(newForm);
+              }
+
+              function removeGuideline(button, taskId) {
+                const guideline = button.closest(`.guidelines-row-task-${taskId}-custom`);
+                guideline.remove();
+              }
+
+              function removeStep(button, id) {
+                const step = button.closest('.steps-row');
+                step.remove();
+              }
+            </script>
+
+
+            <script>
+              let cols = 1;
+
+              function removeRowOutputFormat(row, taskId) {
+                const containers = document.querySelectorAll(`.output-format-column-task-${taskId}-custom`);
+
+                containers.forEach(container => {
+                  if (row > 0 && row <= container.children.length) {
+                    container.querySelector('.row-' + row).remove();
+                  }
+                });
+              }
+
+              function addRowOutputFormat(taskId) {
+                const containers = document.querySelectorAll(`.output-format-column-task-${taskId}-custom`);
+                const rows = containers[0].children.length;
+
+                for (let i = 0; i < containers.length; i++) {
+                  if (i === 0) {
+                    const newContainer = document.createElement('div');
+                    newContainer.classList = `flex items-center gap-1 column-${i+1} row-${rows + 1}`;
+                    newContainer.innerHTML = `
+                    <div
+                    onclick="removeRowOutputFormat(${rows + 1}, ${taskId})" 
+                    class="h-full flex items-center cursor-pointer ">
+                      <img src="https://img.icons8.com/?size=100&id=PE50MiaFV893&format=png&color=000000" class="min-w-[10px] min-h-[10px]" alt="delete" width="10" height="10">
+                    </div>
+                    <input 
+                    type="text" 
+                    placeholder="Column ${i + 1} example ${rows + 1}" 
+                    class="min-w-[200px] border output-format-input w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5">
+                    `;
+                    containers[i].appendChild(newContainer);
+                  } else {
+                    const newInput = document.createElement('input');
+                    newInput.type = 'text';
+                    newInput.placeholder = `Column ${i + 1} example ${rows + 1}`;
+                    newInput.classList = `min-w-[200px] border output-format-input w-full column-${i+1} row-${rows + 1} border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5`;
+                    containers[i].appendChild(newInput);
+                  }
+                }
+              }
+
+              function onChangeColumnNumber(input, taskId) {
+                const columnContainer = document.getElementById(`column-name-container-task-${taskId}-custom`);
+                const containers = document.querySelectorAll(`.output-format-column-task-${taskId}-custom`);
+
+                const rows = containers[0].children.length;
+                const cols = containers.length;
+
+                console.log(rows, cols, taskId)
+
+                const newValue = Number(input.value);
+                if (newValue < 1) return;
+                const gridContainer = document.getElementById(`output-format-grid-task-${taskId}-custom`)
+
+                if (newValue > cols) {
+                  for (let i = cols + 1; i <= newValue; i++) {
+                    const newInput = document.createElement('input');
+                    newInput.type = 'text';
+                    newInput.placeholder = `Column ${i} name`;
+                    newInput.className = `border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 output-format-column-name-task-${taskId}-custom`;
+
+                    columnContainer.appendChild(newInput);
+                  }
+                  let innerColumn = ``;
+                  const newColumn = document.createElement('div');
+                  newColumn.classList = `output-format-column-task-${taskId}-custom flex flex-col gap-1"`;
+                  newColumn.id = `grid-column-${newValue}`;
+                  for (let i = 0; i < rows; i++) {
+                    if (newValue === 1) {
+                      innerColumn += `
+                      <div class="flex items-center gap-1 column-${newValue} row-${i + 1}">
+                      <div
+                      onclick="removeRowOutputFormat(${i + 1}, ${taskId})" 
+                      class="h-full flex items-center cursor-pointer ">
+                        <img src="https://img.icons8.com/?size=100&id=PE50MiaFV893&format=png&color=000000" class="min-w-[10px] min-h-[10px]" alt="delete" width="10" height="10">
+                      </div>
+                      <input 
+                      type="text" 
+                      placeholder="Column ${newValue} example ${i + 1}" 
+                      class="min-w-[200px] border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 output-format-input">
+                      </div>`
+                    }
+                    else {
+                      innerColumn += `
+                      <input 
+                      type="text" 
+                      placeholder="Column ${newValue} example ${i + 1}" 
+                      class="min-w-[200px] border w-full border-gray-500 mt-1 column-${newValue} row-${i + 1} text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 output-format-input">`
+                    }
+
+                  }
+                  newColumn.innerHTML = innerColumn;
+                  gridContainer.appendChild(newColumn);
+                } else if (newValue < cols) {
+                  for (let i = cols; i > newValue; i--) { 
+                    columnContainer.removeChild(columnContainer.lastChild);
+                  }
+                  gridContainer.removeChild(gridContainer.lastChild);
+                }
+              }
+    </script>
+    <script>
+    function changeForm(tab, taskId) {
+      const container = document.getElementById('task-' + taskId);
+      const pages = container.querySelectorAll('.configuration-container');
+      console.log(pages, taskId);
+      pages.forEach(container => {
+        container.classList.add('hidden');
+      });
+
+      if (tab === "template") {
+        document.getElementById(`tab-use-custom-task-${taskId}-template`).classList.add('opacity-50');
+        document.getElementById(`tab-use-template-task-${taskId}-template`).classList.remove('opacity-50');
+        document.getElementById(`task-${taskId}-template`).classList.remove('hidden');
+      }
+      else {
+        document.getElementById(`tab-use-custom-task-${taskId}-custom`).classList.remove('opacity-50');
+        document.getElementById(`tab-use-template-task-${taskId}-custom`).classList.add('opacity-50');
+        document.getElementById(`task-${taskId}-custom`).classList.remove('hidden');
+      }
+      
+    }
+
+    function toggleEntireColumn(taskId, activeForm) {
+        document.getElementById(`nr-of-rows-task-${taskId}-${activeForm}`).classList.toggle("hidden");
+    }
+
+    function submitAuthForm() {
+      const statusMessage = document.getElementById('status-message');
+      const button = document.getElementById('save-tokens-btn');
+      button.textContent = 'Loading...';
+      button.disabled = true; 
+
+      const propelAuthToken = document.getElementById('propel-token-input')?.value;
+      const openAiToken = document.getElementById('openai-token-input')?.value;
+
+      google.script.run.withSuccessHandler(function(response) {
+        button.textContent = 'Save Tokens';
+        button.disabled = false; 
+        statusMessage.textContent = 'Success saved';
+        statusMessage.style.color = 'green';
+        checkAuthTokens();
+      }).saveTokens({ openAiToken, propelAuthToken });
+    }
+
+      function addForm() {
+        let tasksCount = document.querySelectorAll('.task').length + 1;
+        const container = document.getElementById('form-container');
+        const newForm = document.createElement('div');
+        const closeIconUrl = "https://img.icons8.com/?size=100&id=PE50MiaFV893&format=png&color=000000";
+        const encodedCloseIcon = encodeURI(closeIconUrl);
+        newForm.className = 'flex flex-col task';
+        newForm.id = `task-${tasksCount}`;
+        newForm.innerHTML = `
+            <div id="task-${tasksCount}-template" class="configuration-container form-group row border rounded border-gray-300 p-2 shadow">
+            <span class="">Configuration type</span>
+            <div class="flex gap-2 mt-2 mb-2">
+              <button 
+              id="tab-use-template-task-${tasksCount}-template"
+              class="text-white w-full !bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('template', ${tasksCount})">
+                <div>Use template</div>
+              </button>
+              <button 
+              id="tab-use-custom-task-${tasksCount}-template"
+              class="text-white w-full !bg-blue-700 opacity-50 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('custom', ${tasksCount})">
+                <div>Use custom</div>
+              </button>
+            </div>
+            <h2 id="label-task-${tasksCount}-label" class="label-template">Task #${tasksCount}</h2>
+            <div class="col-md-4 mb-2 pt-2">
+              <span class="">Task type</span>
+              <select 
+              onchange="onSelectTaskType(this)"
+              id="task-type-task-${tasksCount}-template"
+              class="border border-gray-500 mt-1 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 task-type">
+                <option value="" selected disabled hidden>Select type</option>
+                <option value="company_description">Company description from URL</option>
+                <option value="customer_logos">Customer logos on landing page from URL</option>
+                <option value="linkedin_profile">Linkedin profile URL to profile, posts, likes scrape</option>
+                <option value="linkedin_post">Linkedin post URL to post engagers</option>
+                <option value="linkedin_persona">Linkedin profile scrape-to-sales persona</option>
+                <option value="linkedin_intent">Linkedin profile scrape-to-intent insights</option>
+                <option value="linkedin_question">Open question about Linkedin profile</option>
+                <option value="description_b2b">Description to B2B/B2C</option>
+                <option value="product_vs_service">Description to Product vs. Service</option>
+                <option value="description_icp">Description to ICP</option>
+                <option value="description_offer">Description to Main offer</option>
+                <option value="description_problem">Description to Problem Solved</option>
+                <option value="company_question">Open question about company</option>
+              </select>
+            </div>
+
+            <div class="mt-2 w-full flex gap-2">
+              <div id="custom-input-container-task-${tasksCount}-template" class="w-full"></div>
+            </div>
+            <div class="input-range flex flex-col pb-2">
+              <span id="input-column-label-task-${tasksCount}-template">Input column</span>
+              <select
+              id="select-input-column-task-${tasksCount}-template" 
+              class="border border-gray-500 mt-1 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 task-type">
+                <option value="" selected hidden disalbed>Select input column</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
+                <option value="J">J</option>
+                <option value="K">K</option>
+                <option value="L">L</option>
+                <option value="M">M</option>
+                <option value="N">N</option>
+                <option value="O">O</option>
+                <option value="P">P</option>
+                <option value="Q">Q</option>
+                <option value="R">R</option>
+                <option value="S">S</option>
+                <option value="T">T</option>
+                <option value="U">U</option>
+                <option value="V">V</option>
+                <option value="W">W</option>
+                <option value="X">X</option>
+                <option value="Y">Y</option>
+                <option value="Z">Z</option>
+              </select>
+            </div>
+            <div class="output-range pt-2 pb-2">
+              <span>Output settings</span>
+              <div class="flex gap-2 mt-1 flex-col">
+                <input
+                id="nr-of-rows-task-${tasksCount}-template" 
+                type="number" min="1" placeholder="#of rows" class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                <select
+                id="select-output-column-task-${tasksCount}-template" 
+                class="border border-gray-500 text-gray-900 text-sm rounded focus:ring-blue-500 w-full focus:border-blue-500 block flex-1 p-2.5 task-type">
+                  <option value="" selected hidden disalbed>Select output column</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                  <option value="H">H</option>
+                  <option value="I">I</option>
+                  <option value="J">J</option>
+                  <option value="K">K</option>
+                  <option value="L">L</option>
+                  <option value="M">M</option>
+                  <option value="N">N</option>
+                  <option value="O">O</option>
+                  <option value="P">P</option>
+                  <option value="Q">Q</option>
+                  <option value="R">R</option>
+                  <option value="S">S</option>
+                  <option value="T">T</option>
+                  <option value="U">U</option>
+                  <option value="V">V</option>
+                  <option value="W">W</option>
+                  <option value="X">X</option>
+                  <option value="Y">Y</option>
+                  <option value="Z">Z</option>
+                </select>
+              </div>
+              <div>
+                <input onchange="toggleEntireColumn(${tasksCount}, 'template')" type="checkbox" id="entire-column-checkbox-task-${tasksCount}-template">
+                <span>Entire column</span>
+              </div>
+            </div>
+
+
+            <div class="mt-2 w-full flex gap-2">
+              <button 
+              id="delete-task-${tasksCount}"
+              class="text-white w-full bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded text-sm px-5 py-2.5" 
+              onclick="removeForm(this, ${tasksCount})">Delete</button>
+              <button 
+              id="run-task-${tasksCount}"
+              class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="runTask(this, 'template')">
+                <div class="flex items-center gap-2">
+                  <img src="https://img.icons8.com/?size=100&id=LVtMPps1ASuP&format=png&color=000000" width="20" height="20" alt="play">
+                  <div class="run-task-${tasksCount}-text">Run task</div>
+                </div>
+              </button>
+            </div>
+            <div class="w-full mb-2" id="status-message-task-${tasksCount}-template"></div>
+          </div>
+
+          <div 
+          id="task-${tasksCount}-custom"
+          class="form-group configuration-container row border rounded border-gray-300 p-2 shadow flex flex-col gap-2 hidden">
+            <span class="">Configuration type</span>
+            <div class="flex gap-2">
+              <button 
+              id="tab-use-template-task-${tasksCount}-custom"
+              class="text-white w-full !bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('template', ${tasksCount})">
+                <div>Use template</div>
+              </button>
+              <button 
+              id="tab-use-custom-task-${tasksCount}-custom"
+              class="text-white w-full !bg-blue-700 opacity-50 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('custom', ${tasksCount})">
+                <div>Use custom</div>
+              </button>
+            </div>
+            <h2 id="label-task-${tasksCount}-custom" class="label-custom">Task #${tasksCount}</h2>
+            <div class="flex flex-col gap-1">
+              <span>Persona</span>
+              <input 
+              id="persona-input-task-${tasksCount}-custom"
+              type="text" 
+              placeholder="e.g. you are an expert in e-commer..." 
+              class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <span>Task</span>
+              <input 
+              id="task-input-task-${tasksCount}-custom"
+              type="text" 
+              placeholder="e.g. Determine if a business..." 
+              class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span>Steps</span>
+              <div id="steps-container-task-${tasksCount}-custom" class="flex flex-col gap-1">
+                <div class="steps-row flex gap-1 items-center">
+                  <input 
+                  type="text" 
+                  placeholder="Enter step" 
+                  class="border step-task-${tasksCount}-custom w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                  <div
+                  onclick="removeStep(this, ${tasksCount})" 
+                  class="h-full flex items-center cursor-pointer">
+                    <img src="${encodedCloseIcon}" class="min-w-[10px] min-h-[10px]" alt="delete" width="10" height="10">
+                  </div>
+                </div>
+              </div>
+              <button 
+              onclick="addStep(${tasksCount})"
+              id="run-task-1"
+              class="text-white w-full !bg-green-700  hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm text-center px-2 py-2.5" >
+                + Add step
+              </button>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span>Guidelines</span>
+              <div id="guidelines-container-task-${tasksCount}-custom" class="flex flex-col gap-1">
+                <div class="guidelines-row-task-${tasksCount}-custom flex gap-1 items-center">
+                  <input 
+                  type="text" 
+                  placeholder="Name" 
+                  class="border guideline-name w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5" />
+                  <input 
+                  type="text" 
+                  placeholder="Enter guideline" 
+                  class="border guideline-value w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5" />
+                  <div
+                  onclick="removeGuideline(this, ${tasksCount})" 
+                  class="h-full flex items-center cursor-pointer">
+                    <img src="${encodedCloseIcon}" 
+                    class="min-w-[10px] min-h-[10px]" 
+                    alt="delete" 
+                    width="10" 
+                    height="10">
+                  </div>
+                </div>
+              </div>
+              <button 
+              onclick="addGuideline(${tasksCount})"
+              id="run-task-${tasksCount}"
+              class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm text-center px-2 py-2.5" >
+                + Add guideline
+              </button>
+            </div>
+            <div class="flex flex-col pb-2">
+              <span id="input-column-label-task-${tasksCount}">Output format</span>
+              <input 
+              id="output-format-nr-of-cols-task-${tasksCount}"
+              type="number" 
+              value="1"
+              onchange="onChangeColumnNumber(this, ${tasksCount})"
+              min="1"
+              max="5"
+              placeholder="#of columns" 
+              class="border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5" />
+              <div>
+                <div 
+                id="column-name-container-task-${tasksCount}-custom" 
+                class="flex flex-col gap-1">
+                  <input 
+                  placeholder="Column 1 name"
+                  class="border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 output-format-column-name-task-${tasksCount}-custom" 
+                  type="text">
+                </div>
+                <div id="column-container-task-${tasksCount}">
+                  <div id="output-format-grid-task-${tasksCount}-custom" class="flex mt-1 flex-row overflow-x-scroll gap-1">
+                    <div class="output-format-column-task-${tasksCount}-custom flex flex-col gap-1">
+                      <div 
+                      class="flex items-center gap-1 column-1 row-1">
+                        <div
+                        onclick="removeRowOutputFormat(1, ${tasksCount})" 
+                        class="h-full flex items-center cursor-pointer ">
+                          <img src="${encodedCloseIcon}" class="min-w-[10px] min-h-[10px]" alt="delete" width="10" height="10">
+                        </div>
+                        <input 
+                        type="text" 
+                        placeholder="Column 1 example 1" 
+                        class="min-w-[200px] border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 output-format-input">
+                      </div>
+                    </div>
+                  </div>
+                  <button 
+                  onclick="addRowOutputFormat(${tasksCount})"
+                  id="run-task-${tasksCount}"
+                  class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm text-center px-2 py-2.5" >
+                    + Add Example Row
+                  </button>
+                </div>
+              </div>  
+            </div>
+
+
+            <div class="flex flex-col pb-2">
+              <span id="input-column-label-task-${tasksCount}">Input column</span>
+              <select
+              id="select-input-column-task-${tasksCount}-custom" 
+              class="border border-gray-500 mt-1 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 task-type">
+                <option value="" selected hidden disalbed>Select input column</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
+                <option value="J">J</option>
+                <option value="K">K</option>
+                <option value="L">L</option>
+                <option value="M">M</option>
+                <option value="N">N</option>
+                <option value="O">O</option>
+                <option value="P">P</option>
+                <option value="Q">Q</option>
+                <option value="R">R</option>
+                <option value="S">S</option>
+                <option value="T">T</option>
+                <option value="U">U</option>
+                <option value="V">V</option>
+                <option value="W">W</option>
+                <option value="X">X</option>
+                <option value="Y">Y</option>
+                <option value="Z">Z</option>
+              </select>
+            </div>
+            <div class="output-range pb-2">
+              <span>Output settings</span>
+              <div class="flex gap-2 mt-1 flex-col">
+                <input
+                id="nr-of-rows-task-${tasksCount}-custom" 
+                type="number" 
+                min="1" 
+                placeholder="#of rows" 
+                class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                <select
+                id="select-output-column-task-${tasksCount}-custom" 
+                class="border border-gray-500 text-gray-900 text-sm rounded focus:ring-blue-500 w-full focus:border-blue-500 block flex-1 p-2.5 task-type">
+                  <option value="" selected hidden disalbed>Select output column</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                  <option value="H">H</option>
+                  <option value="I">I</option>
+                  <option value="J">J</option>
+                  <option value="K">K</option>
+                  <option value="L">L</option>
+                  <option value="M">M</option>
+                  <option value="N">N</option>
+                  <option value="O">O</option>
+                  <option value="P">P</option>
+                  <option value="Q">Q</option>
+                  <option value="R">R</option>
+                  <option value="S">S</option>
+                  <option value="T">T</option>
+                  <option value="U">U</option>
+                  <option value="V">V</option>
+                  <option value="W">W</option>
+                  <option value="X">X</option>
+                  <option value="Y">Y</option>
+                  <option value="Z">Z</option>
+                </select>
+              </div>
+              <div>
+                <input onchange="toggleEntireColumn(${tasksCount}, 'custom')" type="checkbox" id="entire-column-checkbox-task-${tasksCount}-custom">
+                <span>Entire column</span>
+              </div>
+            </div>
+            <div class="mt-2 w-full flex gap-2 flex">
+              <button 
+              id="delete-task-${tasksCount}"
+              class="text-white w-full bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded text-sm px-5 py-2.5" 
+              onclick="removeForm(this, ${tasksCount})">Delete</button>
+              <button 
+              id="run-task-${tasksCount}"
+              class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="runTask(this, 'custom')">
+                <div class="flex items-center gap-2">
+                  <img src="https://img.icons8.com/?size=100&id=LVtMPps1ASuP&format=png&color=000000" width="20" height="20" alt="play">
+                  <div class="run-task-${tasksCount}-text text-center">Run task</div>
+                </div>
+              </button>
+            </div>
+            <div class="w-full mb-2" id="status-message-task-${tasksCount}-custom"></div>
+        `;
+        container.appendChild(newForm);
+      }
+
+      function addSavedForm({
+        type,
+        template: {
+          task_type,
+          input_column,
+          output_column,
+          nr_of_rows,
+          is_entire_column
+        },
+        custom: {
+          persona,
+          task,
+          nr_of_rows_custom,
+          output_column_custom,
+          input_column_custom,
+          output_format_columns_values,
+          output_format_column_names,
+          steps,
+          guidelines,
+          is_entire_column_custom
+        }
+      }) {
+        console.log()
+        let tasksCount = document.querySelectorAll('.task').length + 1;
+        const container = document.getElementById('form-container');
+        const newForm = document.createElement('div');
+        const closeIconUrl = "https://img.icons8.com/?size=100&id=PE50MiaFV893&format=png&color=000000";
+        const encodedCloseIcon = encodeURI(closeIconUrl);
+        newForm.className = 'flex flex-col task';
+        newForm.id = `task-${tasksCount}`;
+        newForm.innerHTML = `
+            <div id="task-${tasksCount}-template" class="configuration-container form-group row border rounded border-gray-300 p-2 shadow">
+            <span class="">Configuration type</span>
+            <div class="flex gap-2 mt-2 mb-2">
+              <button 
+              id="tab-use-template-task-${tasksCount}-template"
+              class="text-white w-full !bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('template', ${tasksCount})">
+                <div>Use template</div>
+              </button>
+              <button 
+              id="tab-use-custom-task-${tasksCount}-template"
+              class="text-white w-full !bg-blue-700 opacity-50 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('custom', ${tasksCount})">
+                <div>Use custom</div>
+              </button>
+            </div>
+            <h2 id="label-task-${tasksCount}-label" class="label-template">Task #${tasksCount}</h2>
+            <div class="col-md-4 mb-2 pt-2">
+              <span class="">Task type</span>
+              <select 
+              onchange="onSelectTaskType(this)"
+              id="task-type-task-${tasksCount}-template"
+              class="border border-gray-500 mt-1 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 task-type">
+                <option value="" ${task_type ? "" : "selected"} disabled hidden>Select type</option>
+                <option value="company_description" ${task_type === "company_description" ? "selected" : ""}>Company description from URL</option>
+                <option value="customer_logos" ${task_type === "customer_logos" ? "selected" : ""}>Customer logos on landing page from URL</option>
+                <option value="linkedin_profile" ${task_type == "linkedin_profile" ? "selected" : ""}>Linkedin profile URL to profile, posts, likes scrape</option>
+                <option value="linkedin_post" ${task_type === "linkedin_post" ? "selected" : ""}>Linkedin post URL to post engagers</option>
+                <option value="linkedin_persona" ${task_type === "linkedin_persona" ? "selected" : ""}>Linkedin profile scrape-to-sales persona</option>
+                <option value="linkedin_intent" ${task_type === "linkedin_intent" ? "selected" : ""}>Linkedin profile scrape-to-intent insights</option>
+                <option value="linkedin_question" ${task_type === "linkedin_question" ? "selected" : ""}>Open question about Linkedin profile</option>
+                <option value="description_b2b" ${task_type === "description_b2b" ? "selected" : ""}>Description to B2B/B2C</option>
+                <option value="product_vs_service" ${task_type === "product_vs_service" ? "selected" : ""}>Description to Product vs. Service</option>
+                <option value="description_icp" ${task_type === "description_icp" ? "selected" : ""}>Description to ICP</option>
+                <option value="description_offer" ${task_type === "description_offer" ? "selected" : ""}>Description to Main offer</option>
+                <option value="description_problem" ${task_type === "description_problem" ? "selected" : ""}>Description to Problem Solved</option>
+                <option value="company_question" ${task_type === "company_question" ? "selected" : ""}>Open question about company</option>
+              </select>
+            </div>
+
+            <div class="mt-2 w-full flex gap-2">
+              <div id="custom-input-container-task-${tasksCount}-template" class="w-full"></div>
+            </div>
+            <div class="input-range flex flex-col pb-2">
+              <span id="input-column-label-task-${tasksCount}-template">Input column</span>
+              <select
+              id="select-input-column-task-${tasksCount}-template" 
+              class="border border-gray-500 mt-1 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 task-type">
+                <option ${input_column ? "" : "selected"} selected hidden disalbed>Select input column</option>
+                <option ${input_column === "A" ? "selected" : ""} value="A">A</option>
+                <option ${input_column === "B" ? "selected" : ""} value="B">B</option>
+                <option ${input_column === "C" ? "selected" : ""} value="C">C</option>
+                <option ${input_column === "D" ? "selected" : ""} value="D">D</option>
+                <option ${input_column === "E" ? "selected" : ""} value="E">E</option>
+                <option ${input_column === "F" ? "selected" : ""} value="F">F</option>
+                <option ${input_column === "G" ? "selected" : ""} value="G">G</option>
+                <option ${input_column === "H" ? "selected" : ""} value="H">H</option>
+                <option ${input_column === "I" ? "selected" : ""} value="I">I</option>
+                <option ${input_column === "J" ? "selected" : ""} value="J">J</option>
+                <option ${input_column === "K" ? "selected" : ""} value="K">K</option>
+                <option ${input_column === "L" ? "selected" : ""} value="L">L</option>
+                <option ${input_column === "M" ? "selected" : ""} value="M">M</option>
+                <option ${input_column === "N" ? "selected" : ""} value="N">N</option>
+                <option ${input_column === "O" ? "selected" : ""} value="O">O</option>
+                <option ${input_column === "P" ? "selected" : ""} value="P">P</option>
+                <option ${input_column === "Q" ? "selected" : ""} value="Q">Q</option>
+                <option ${input_column === "R" ? "selected" : ""} value="R">R</option>
+                <option ${input_column === "S" ? "selected" : ""} value="S">S</option>
+                <option ${input_column === "T" ? "selected" : ""} value="T">T</option>
+                <option ${input_column === "U" ? "selected" : ""} value="U">U</option>
+                <option ${input_column === "V" ? "selected" : ""} value="V">V</option>
+                <option ${input_column === "W" ? "selected" : ""} value="W">W</option>
+                <option ${input_column === "X" ? "selected" : ""} value="X">X</option>
+                <option ${input_column === "Y" ? "selected" : ""} value="Y">Y</option>
+                <option ${input_column === "Z" ? "selected" : ""} value="Z">Z</option>
+              </select>
+            </div>
+            <div class="output-range pt-2 pb-2">
+              <span>Output settings</span>
+              <div class="flex gap-2 mt-1 flex-col">
+                <input
+                id="nr-of-rows-task-${tasksCount}-template" 
+                type="number" min="1" value="${nr_of_rows}" placeholder="#of rows" class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                <select
+                id="select-output-column-task-${tasksCount}-template" 
+                class="border border-gray-500 text-gray-900 text-sm rounded focus:ring-blue-500 w-full focus:border-blue-500 block flex-1 p-2.5 task-type">
+                  <option ${output_column ? "" : "selected"} selected hidden disalbed>Select output column</option>
+                  <option ${output_column === "A" ? "selected" : ""} value="A">A</option>
+                  <option ${output_column === "B" ? "selected" : ""} value="B">B</option>
+                  <option ${output_column === "C" ? "selected" : ""} value="C">C</option>
+                  <option ${output_column === "D" ? "selected" : ""} value="D">D</option>
+                  <option ${output_column === "E" ? "selected" : ""} value="E">E</option>
+                  <option ${output_column === "F" ? "selected" : ""} value="F">F</option>
+                  <option ${output_column === "G" ? "selected" : ""} value="G">G</option>
+                  <option ${output_column === "H" ? "selected" : ""} value="H">H</option>
+                  <option ${output_column === "I" ? "selected" : ""} value="I">I</option>
+                  <option ${output_column === "J" ? "selected" : ""} value="J">J</option>
+                  <option ${output_column === "K" ? "selected" : ""} value="K">K</option>
+                  <option ${output_column === "L" ? "selected" : ""} value="L">L</option>
+                  <option ${output_column === "M" ? "selected" : ""} value="M">M</option>
+                  <option ${output_column === "N" ? "selected" : ""} value="N">N</option>
+                  <option ${output_column === "O" ? "selected" : ""} value="O">O</option>
+                  <option ${output_column === "P" ? "selected" : ""} value="P">P</option>
+                  <option ${output_column === "Q" ? "selected" : ""} value="Q">Q</option>
+                  <option ${output_column === "R" ? "selected" : ""} value="R">R</option>
+                  <option ${output_column === "S" ? "selected" : ""} value="S">S</option>
+                  <option ${output_column === "T" ? "selected" : ""} value="T">T</option>
+                  <option ${output_column === "U" ? "selected" : ""} value="U">U</option>
+                  <option ${output_column === "V" ? "selected" : ""} value="V">V</option>
+                  <option ${output_column === "W" ? "selected" : ""} value="W">W</option>
+                  <option ${output_column === "X" ? "selected" : ""} value="X">X</option>
+                  <option ${output_column === "Y" ? "selected" : ""} value="Y">Y</option>
+                  <option ${output_column === "Z" ? "selected" : ""} value="Z">Z</option>
+                </select>
+              </div>
+              <div>
+                <input onchange="toggleEntireColumn(${tasksCount}, 'template')" ${is_entire_column ? 'checked' : ""} type="checkbox" id="entire-column-checkbox-task-${tasksCount}-template">
+                <span>Entire column</span>
+              </div>
+            </div>
+
+            <div class="mt-2 w-full flex gap-2">
+              <button 
+              id="delete-task-${tasksCount}"
+              class="text-white w-full bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded text-sm px-5 py-2.5" 
+              onclick="removeForm(this, ${tasksCount})">Delete</button>
+              <button 
+              id="run-task-${tasksCount}"
+              class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="runTask(this, 'template')">
+                <div class="flex items-center gap-2">
+                  <img src="https://img.icons8.com/?size=100&id=LVtMPps1ASuP&format=png&color=000000" width="20" height="20" alt="play">
+                  <div class="run-task-${tasksCount}-text">Run task</div>
+                </div>
+              </button>
+            </div>
+            <div class="w-full mb-2" id="status-message-task-${tasksCount}-template"></div>
+          </div>
+
+          <div 
+          id="task-${tasksCount}-custom"
+          class="form-group configuration-container row border rounded border-gray-300 p-2 shadow flex flex-col gap-2 hidden">
+            <span class="">Configuration type</span>
+            <div class="flex gap-2">
+              <button 
+              id="tab-use-template-task-${tasksCount}-custom"
+              class="text-white w-full !bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('template', ${tasksCount})">
+                <div>Use template</div>
+              </button>
+              <button 
+              id="tab-use-custom-task-${tasksCount}-custom"
+              class="text-white w-full !bg-blue-700 opacity-50 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="changeForm('custom', ${tasksCount})">
+                <div>Use custom</div>
+              </button>
+            </div>
+            <h2 id="label-task-${tasksCount}-custom" class="label-custom">Task #${tasksCount}</h2>
+            <div class="flex flex-col gap-1">
+              <span>Persona</span>
+              <input 
+              id="persona-input-task-${tasksCount}-custom"
+              type="text" 
+              placeholder="e.g. you are an expert in e-commer..." 
+              class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <span>Task</span>
+              <input 
+              id="task-input-task-${tasksCount}-custom"
+              type="text" 
+              placeholder="e.g. Determine if a business..." 
+              class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span>Steps</span>
+              <div id="steps-container-task-${tasksCount}-custom" class="flex flex-col gap-1">
+                <div class="steps-row flex gap-1 items-center">
+                  <input 
+                  type="text" 
+                  placeholder="Enter step" 
+                  class="border step-task-${tasksCount}-custom w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                  <div
+                  onclick="removeStep(this, ${tasksCount})" 
+                  class="h-full flex items-center cursor-pointer">
+                    <img src="${encodedCloseIcon}" class="min-w-[10px] min-h-[10px]" alt="delete" width="10" height="10">
+                  </div>
+                </div>
+              </div>
+              <button 
+              onclick="addStep(${tasksCount})"
+              id="run-task-1"
+              class="text-white w-full !bg-green-700  hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm text-center px-2 py-2.5" >
+                + Add step
+              </button>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span>Guidelines</span>
+              <div id="guidelines-container-task-${tasksCount}-custom" class="flex flex-col gap-1">
+                <div class="guidelines-row-task-${tasksCount}-custom flex gap-1 items-center">
+                  <input 
+                  type="text" 
+                  placeholder="Name" 
+                  class="border guideline-name w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5" />
+                  <input 
+                  type="text" 
+                  placeholder="Enter guideline" 
+                  class="border guideline-value w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5" />
+                  <div
+                  onclick="removeGuideline(this, ${tasksCount})" 
+                  class="h-full flex items-center cursor-pointer">
+                    <img src="${encodedCloseIcon}" 
+                    class="min-w-[10px] min-h-[10px]" 
+                    alt="delete" 
+                    width="10" 
+                    height="10">
+                  </div>
+                </div>
+              </div>
+              <button 
+              onclick="addGuideline(${tasksCount})"
+              id="run-task-${tasksCount}"
+              class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm text-center px-2 py-2.5" >
+                + Add guideline
+              </button>
+            </div>
+            <div class="flex flex-col pb-2">
+              <span id="input-column-label-task-${tasksCount}">Output format</span>
+              <input 
+              id="output-format-nr-of-cols-task-${tasksCount}"
+              type="number" 
+              value="1"
+              onchange="onChangeColumnNumber(this, ${tasksCount})"
+              min="1"
+              max="5"
+              placeholder="#of columns" 
+              class="border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5" />
+              <div>
+                <div 
+                id="column-name-container-task-${tasksCount}-custom" 
+                class="flex flex-col gap-1">
+                  <input 
+                  placeholder="Column 1 name"
+                  class="border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 output-format-column-name-task-${tasksCount}-custom" 
+                  type="text">
+                </div>
+                <div id="column-container-task-${tasksCount}">
+                  <div id="output-format-grid-task-${tasksCount}-custom" class="flex mt-1 flex-row overflow-x-scroll gap-1">
+                    <div class="output-format-column-task-${tasksCount}-custom flex flex-col gap-1">
+                      <div 
+                      class="flex items-center gap-1 column-1 row-1">
+                        <div
+                        onclick="removeRowOutputFormat(1, ${tasksCount})" 
+                        class="h-full flex items-center cursor-pointer ">
+                          <img src="${encodedCloseIcon}" class="min-w-[10px] min-h-[10px]" alt="delete" width="10" height="10">
+                        </div>
+                        <input 
+                        type="text" 
+                        placeholder="Column 1 example 1" 
+                        class="min-w-[200px] border w-full border-gray-500 mt-1 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 output-format-input">
+                      </div>
+                    </div>
+                  </div>
+                  <button 
+                  onclick="addRowOutputFormat(${tasksCount})"
+                  id="run-task-${tasksCount}"
+                  class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm text-center px-2 py-2.5" >
+                    + Add Example Row
+                  </button>
+                </div>
+              </div>  
+            </div>
+
+            <div class="flex flex-col pb-2">
+              <span id="input-column-label-task-${tasksCount}">Input column</span>
+              <select
+              id="select-input-column-task-${tasksCount}-custom" 
+              class="border border-gray-500 mt-1 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 task-type">
+                <option value="" selected hidden disalbed>Select input column</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
+                <option value="J">J</option>
+                <option value="K">K</option>
+                <option value="L">L</option>
+                <option value="M">M</option>
+                <option value="N">N</option>
+                <option value="O">O</option>
+                <option value="P">P</option>
+                <option value="Q">Q</option>
+                <option value="R">R</option>
+                <option value="S">S</option>
+                <option value="T">T</option>
+                <option value="U">U</option>
+                <option value="V">V</option>
+                <option value="W">W</option>
+                <option value="X">X</option>
+                <option value="Y">Y</option>
+                <option value="Z">Z</option>
+              </select>
+            </div>
+            <div class="output-range pb-2">
+              <span>Output settings</span>
+              <div class="flex gap-2 mt-1 flex-col">
+                <input
+                id="nr-of-rows-task-${tasksCount}-custom" 
+                type="number" 
+                min="1" 
+                placeholder="#of rows" 
+                class="border w-full border-gray-500 text-gray-900 text-sm rounded focus:border-blue-500 block p-2.5 read-range" />
+                <select
+                id="select-output-column-task-${tasksCount}-custom" 
+                class="border border-gray-500 text-gray-900 text-sm rounded focus:ring-blue-500 w-full focus:border-blue-500 block flex-1 p-2.5 task-type">
+                  <option value="" selected hidden disalbed>Select output column</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                  <option value="H">H</option>
+                  <option value="I">I</option>
+                  <option value="J">J</option>
+                  <option value="K">K</option>
+                  <option value="L">L</option>
+                  <option value="M">M</option>
+                  <option value="N">N</option>
+                  <option value="O">O</option>
+                  <option value="P">P</option>
+                  <option value="Q">Q</option>
+                  <option value="R">R</option>
+                  <option value="S">S</option>
+                  <option value="T">T</option>
+                  <option value="U">U</option>
+                  <option value="V">V</option>
+                  <option value="W">W</option>
+                  <option value="X">X</option>
+                  <option value="Y">Y</option>
+                  <option value="Z">Z</option>
+                </select>
+              </div>
+              <div>
+                <input onchange="toggleEntireColumn(${tasksCount}, 'custom')" type="checkbox" id="entire-column-checkbox-task-${tasksCount}-custom">
+                <span>Entire column</span>
+              </div>
+            </div>
+            <div class="mt-2 w-full flex gap-2 flex">
+              <button 
+              id="delete-task-${tasksCount}"
+              class="text-white w-full bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded text-sm px-5 py-2.5" 
+              onclick="removeForm(this, ${tasksCount})">Delete</button>
+              <button 
+              id="run-task-${tasksCount}"
+              class="text-white w-full !bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded text-sm px-2 py-2.5" 
+              onclick="runTask(this, 'custom')">
+                <div class="flex items-center gap-2">
+                  <img src="https://img.icons8.com/?size=100&id=LVtMPps1ASuP&format=png&color=000000" width="20" height="20" alt="play">
+                  <div class="run-task-${tasksCount}-text text-center">Run task</div>
+                </div>
+              </button>
+            </div>
+            <div class="w-full mb-2" id="status-message-task-${tasksCount}-custom"></div>
+        `;
+        container.appendChild(newForm);
+        const taskTypeInput = document.getElementById(`task-type-task-${tasksCount}-template`);
+        onSelectTaskType(taskTypeInput);
+        if (is_entire_column) toggleEntireColumn(tasksCount, 'template');
+      }
+
+      function updateTasksOrder() {
+        const containers = document.querySelectorAll('.task');
+        Array.from(containers).forEach((container, index) => {
+          document.querySelector('.label-template').textContent = "Task #" + (index + 1);
+          document.querySelector('.label-custom').textContent = "Task #" + (index + 1);
+        })
+      }
+
+      function removeForm(button, task) {
+        const formGroup = button.closest('#task-' + task);
+        formGroup.remove();
+        updateTasksOrder();
+      }
+
+      async function runTask(button, activeForm) {
+        if (activeForm === "template") {
+          button.textContent = 'Loading...';
+          button.disabled = true;
+          const formGroup = button.closest('.form-group');
+          const statusContainerTemplate = document.getElementById('status-message-' + formGroup.id);
+          const isEntireColumn = document.getElementById('entire-column-checkbox-' + formGroup.id)?.checked;
+          statusContainerTemplate.textContent = '';
+          statusContainerTemplate.style.color = 'white';
+
+          let custom_instructions = null;
+          custom_instructions = document.getElementById('custom-input-' + formGroup.id)?.value;
+
+          const taskType = document.getElementById('task-type-' + formGroup.id)?.value;
+          const inputColumn = document.getElementById('select-input-column-' + formGroup.id)?.value;
+          const outputColumn = document.getElementById('select-output-column-' + formGroup.id)?.value;
+          const nrOfRows = document.getElementById('nr-of-rows-' + formGroup.id)?.value;
+          let inputRange = '';
+          let outputRange = '';
+          if (isEntireColumn) {
+            inputRange = `${inputColumn}1:${inputColumn}1000`;
+            outputRange = `${outputColumn}1:${outputColumn}1000`;
+          } else {
+            inputRange = `${inputColumn}1:${inputColumn}${nrOfRows}`;
+            outputRange = `${outputColumn}1:${outputColumn}${nrOfRows}`;
+          }
+
+          if (
+            !inputColumn || 
+            !outputColumn || 
+            (!nrOfRows && !isEntireColumn) ||
+            !taskType
+          ) {
+            statusContainerTemplate.style.color = 'red';
+            statusContainerTemplate.textContent = "Complete all fields";
+            button.innerHTML = `
+              <div class="flex items-center gap-2">
+                <img src="https://img.icons8.com/?size=100&id=LVtMPps1ASuP&format=png&color=000000" width="20" height="20" alt="play">
+                <div class="run-${formGroup.id}-text">Run task</div>
+              </div>`;
+            button.disabled = false;
+            return;
+          }
+          //fetch
+          await google.script.run.withSuccessHandler(response => {
+            if (response.isSuccess) {statusContainerTemplate.style.color = ' green'}
+            else {statusContainerTemplate.style.color = 'red'}
+            statusContainerTemplate.textContent = response.message;
+            button.innerHTML = `
+              <div class="flex items-center gap-2">
+                <img src="https://img.icons8.com/?size=100&id=LVtMPps1ASuP&format=png&color=000000" width="20" height="20" alt="play">
+                <div class="run-${formGroup.id}-text">Run task</div>
+              </div>`;
+            button.disabled = false;
+          }).runTask({
+            inputRange,
+            outputRange,
+            task_type: taskType,
+            custom_instructions
+          });
+          return;
+        }
+        else if (activeForm === "custom") {
+          const isEntireColumn = document.getElementById('entire-column-checkbox-' + formGroup.id)?.checked;
+          button.textContent = 'Loading...';
+          button.disabled = true;
+          const formGroup = button.closest('.form-group');
+          const statusContainerCustom = document.getElementById(`status-message-${formGroup.id}`);
+          statusContainerCustom.textContent = '';
+          statusContainerCustom.style.color = 'white';
+
+          //main
+          const persona = document.getElementById(`persona-input-${formGroup.id}`)?.value;
+          const task = document.getElementById(`task-input-${formGroup.id}`)?.value;
+          const stepInputs = document.querySelectorAll(`.step-${formGroup.id}`);
+          const steps = Array.from(stepInputs).map(input => input.value).filter(item => item);
+          const guidelinedInputGroups = document.querySelectorAll(`.guidelines-row-${formGroup.id}`);
+          const guidelines = Array.from(guidelinedInputGroups).map(group => {
+            const name = group.querySelector('.guideline-name')?.value;
+            const value = group.querySelector('.guideline-value')?.value;
+            if (!name || !value) return null;
+            return {
+              name,
+              value
+            };
+          }).filter(item => item);
+
+          //output format
+          const outputFormatColumnNamesInputs = document.querySelectorAll(`.output-format-column-name-${formGroup.id}`);
+          const outputFormatColumnNames = Array.from(outputFormatColumnNamesInputs).map(input => input.value);
+
+          const outputFormatColumns = document.querySelectorAll(`.output-format-column-${formGroup.id}`);
+          const outputFormatColumnsValues = Array.from(outputFormatColumns).map(column => {
+            const columnsInputs = column.querySelectorAll('.output-format-input');
+            return Array.from(columnsInputs).map(input => input.value)
+          })
+
+          //range 
+          const inputColumn = document.getElementById(`select-input-column-${formGroup.id}`)?.value;
+          const outputColumn = document.getElementById(`select-output-column-${formGroup.id}`)?.value;
+          const nrOfRows = document.getElementById(`input-nr-of-rows-${formGroup.id}`)?.value;
+          
+          let inputRange = '';
+          let outputRange = '';
+          if (isEntireColumn) {
+            inputRange = `${inputColumn}1:${inputColumn}1000`;
+            outputRange = `${outputColumn}1:${outputColumn}1000`;
+          } else {
+            inputRange = `${inputColumn}1:${inputColumn}${nrOfRows}`;
+            outputRange = `${outputColumn}1:${outputColumn}${nrOfRows}`;
+          }
+
+           if (
+            !inputColumn || 
+            !outputColumn || 
+            (!nrOfRows && !isEntireColumn) || 
+            !persona ||
+            !task ||
+            !steps || !steps.length ||
+            !guidelines || !guidelines.length ||
+            !outputFormatColumnNames || !outputFormatColumnNames.length ||
+            !outputFormatColumnsValues
+          ) {
+            statusContainerCustom.style.color = 'red';
+            statusContainerCustom.textContent = "Complete all fields";
+            button.innerHTML = `
+              <div class="flex items-center gap-2">
+                <img src="https://img.icons8.com/?size=100&id=LVtMPps1ASuP&format=png&color=000000" width="20" height="20" alt="play">
+                <div class="run-${formGroup.id}-text">Run task</div>
+              </div>`;
+            button.disabled = false;
+            return;
+          }
+          const outputFormatArr = outputFormatColumnNames.map((item, index) => {
+            return {
+              name: item,
+              values: outputFormatColumnsValues[index]
+            }
+          })
+
+          const outputFormat = outputFormatArr.reduce((acc, item) => {
+            acc[item.name] = item.values;
+            return acc;
+          }, {});
+          console.log(inputRange, outputRange, persona, task, steps, guidelines, outputFormat, outputFormatArr, outputFormatColumnNames)
+          //fetch
+          await google.script.run.withSuccessHandler(response => {
+            if (response.isSuccess) {statusContainerCustom.style.color = ' green'}
+            else {statusContainerCustom.style.color = 'red'}
+            statusContainerCustom.textContent = response.message;
+            button.innerHTML = `
+              <div class="flex items-center gap-2">
+                <img src="https://img.icons8.com/?size=100&id=LVtMPps1ASuP&format=png&color=000000" width="20" height="20" alt="play">
+                <div class="run-${formGroup.id}-text">Run task</div>
+              </div>`;
+            button.disabled = false;
+
+          }).runTask({
+            custom_instructions: {
+              persona,
+              task,
+              steps,
+              guidelines,
+              outputFormat
+            },
+            task_type: "custom_prompt",
+            inputRange,
+            outputRange,
+          });
+        }
+
+      }
+
+    </script>
+  </body>
+</html>
